@@ -1,0 +1,441 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="postgresModel.Store" Provider="Devart.Data.PostgreSql" ProviderManifestToken="PostgreSQL, 15.1.0" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Cijena_rada">
+          <Key>
+            <PropertyRef Name="cijenaID" />
+          </Key>
+          <Property Name="cijenaID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Redovna" Type="double precision" Nullable="false" />
+          <Property Name="Prekovremena" Type="double precision" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Korisnik">
+          <Key>
+            <PropertyRef Name="korisnikID" />
+          </Key>
+          <Property Name="korisnikID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Ime" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Prezime" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Kor_ime" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Datum_rodenja" Type="date" Nullable="false" />
+          <Property Name="OIB" Type="varchar" MaxLength="11" Nullable="false" />
+          <Property Name="Lozinka" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="ulogaID" Type="int" Nullable="false" />
+          <Property Name="Zaposlen" Type="boolean" Nullable="false" />
+          <Property Name="Email" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="cijenaID" Type="int" />
+        </EntityType>
+        <EntityType Name="Logs">
+          <Key>
+            <PropertyRef Name="logID" />
+          </Key>
+          <Property Name="logID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="old_email" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Placa">
+          <Key>
+            <PropertyRef Name="placaID" />
+          </Key>
+          <Property Name="placaID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="korisnikID" Type="int" Nullable="false" />
+          <Property Name="Ukupan_Iznos" Type="double precision" Nullable="false" />
+          <Property Name="Pocetak_mjeseca" Type="date" Nullable="false" />
+          <Property Name="Kraj_mjeseca" Type="date" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Pocetak_ZavrĹˇetak_rada">
+          <Key>
+            <PropertyRef Name="pozaRadaID" />
+          </Key>
+          <Property Name="pozaRadaID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Datum_pocetka" Type="date" Nullable="false" />
+          <Property Name="Datum_zavrĹˇetka" Type="date" />
+          <Property Name="korisnikID" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Radno_vrijeme">
+          <Key>
+            <PropertyRef Name="radnoVrijemeID" />
+          </Key>
+          <Property Name="radnoVrijemeID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="korisnikID" Type="int" Nullable="false" />
+          <Property Name="Pocetak_rada" Type="time" Nullable="false" />
+          <Property Name="Trajanje_rada" Type="time" />
+          <Property Name="ZavrĹˇetak_rada" Type="time" Nullable="false" />
+          <Property Name="Datum_rada" Type="date" />
+        </EntityType>
+        <EntityType Name="Uloga">
+          <Key>
+            <PropertyRef Name="ulogaID" />
+          </Key>
+          <Property Name="ulogaID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Ime" Type="varchar" MaxLength="20" Nullable="false" />
+        </EntityType>
+        <Association Name="public_cijenaKorisnikForeignKey">
+          <End Role="Cijena_rada" Type="Self.Cijena_rada" Multiplicity="0..1" />
+          <End Role="Korisnik" Type="Self.Korisnik" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Cijena_rada">
+              <PropertyRef Name="cijenaID" />
+            </Principal>
+            <Dependent Role="Korisnik">
+              <PropertyRef Name="cijenaID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="public_KorisnikPoZarada">
+          <End Role="Korisnik" Type="Self.Korisnik" Multiplicity="1" />
+          <End Role="Pocetak_ZavrĹˇetak_rada" Type="Self.Pocetak_ZavrĹˇetak_rada" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Korisnik">
+              <PropertyRef Name="korisnikID" />
+            </Principal>
+            <Dependent Role="Pocetak_ZavrĹˇetak_rada">
+              <PropertyRef Name="korisnikID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="public_PlacaKorisnikForeignKey">
+          <End Role="Korisnik" Type="Self.Korisnik" Multiplicity="1" />
+          <End Role="Placa" Type="Self.Placa" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Korisnik">
+              <PropertyRef Name="korisnikID" />
+            </Principal>
+            <Dependent Role="Placa">
+              <PropertyRef Name="korisnikID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="public_RadnoVrijemeKorisnikForeignKey">
+          <End Role="Korisnik" Type="Self.Korisnik" Multiplicity="1" />
+          <End Role="Radno_vrijeme" Type="Self.Radno_vrijeme" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Korisnik">
+              <PropertyRef Name="korisnikID" />
+            </Principal>
+            <Dependent Role="Radno_vrijeme">
+              <PropertyRef Name="korisnikID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="public_ulogaForeignKeyConstraint">
+          <End Role="Uloga" Type="Self.Uloga" Multiplicity="1" />
+          <End Role="Korisnik" Type="Self.Korisnik" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Uloga">
+              <PropertyRef Name="ulogaID" />
+            </Principal>
+            <Dependent Role="Korisnik">
+              <PropertyRef Name="ulogaID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="postgresModelStoreContainer">
+          <EntitySet Name="Cijena_rada" EntityType="Self.Cijena_rada" Schema="public" store:Type="Tables" />
+          <EntitySet Name="Korisnik" EntityType="Self.Korisnik" Schema="public" store:Type="Tables" />
+          <EntitySet Name="Logs" EntityType="Self.Logs" Schema="public" store:Type="Tables" />
+          <EntitySet Name="Placa" EntityType="Self.Placa" Schema="public" store:Type="Tables" />
+          <EntitySet Name="Pocetak_ZavrĹˇetak_rada" EntityType="Self.Pocetak_ZavrĹˇetak_rada" Schema="public" store:Type="Tables" />
+          <EntitySet Name="Radno_vrijeme" EntityType="Self.Radno_vrijeme" Schema="public" store:Type="Tables" />
+          <EntitySet Name="Uloga" EntityType="Self.Uloga" Schema="public" store:Type="Tables" />
+          <AssociationSet Name="public_cijenaKorisnikForeignKey" Association="Self.public_cijenaKorisnikForeignKey">
+            <End Role="Cijena_rada" EntitySet="Cijena_rada" />
+            <End Role="Korisnik" EntitySet="Korisnik" />
+          </AssociationSet>
+          <AssociationSet Name="public_KorisnikPoZarada" Association="Self.public_KorisnikPoZarada">
+            <End Role="Korisnik" EntitySet="Korisnik" />
+            <End Role="Pocetak_ZavrĹˇetak_rada" EntitySet="Pocetak_ZavrĹˇetak_rada" />
+          </AssociationSet>
+          <AssociationSet Name="public_PlacaKorisnikForeignKey" Association="Self.public_PlacaKorisnikForeignKey">
+            <End Role="Korisnik" EntitySet="Korisnik" />
+            <End Role="Placa" EntitySet="Placa" />
+          </AssociationSet>
+          <AssociationSet Name="public_RadnoVrijemeKorisnikForeignKey" Association="Self.public_RadnoVrijemeKorisnikForeignKey">
+            <End Role="Korisnik" EntitySet="Korisnik" />
+            <End Role="Radno_vrijeme" EntitySet="Radno_vrijeme" />
+          </AssociationSet>
+          <AssociationSet Name="public_ulogaForeignKeyConstraint" Association="Self.public_ulogaForeignKeyConstraint">
+            <End Role="Uloga" EntitySet="Uloga" />
+            <End Role="Korisnik" EntitySet="Korisnik" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="postgresModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Cijena_rada">
+          <Key>
+            <PropertyRef Name="cijenaID" />
+          </Key>
+          <Property Name="cijenaID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Redovna" Type="Double" Nullable="false" />
+          <Property Name="Prekovremena" Type="Double" Nullable="false" />
+          <NavigationProperty Name="Korisnik" Relationship="Self.public_cijenaKorisnikForeignKey" FromRole="Cijena_rada" ToRole="Korisnik" />
+        </EntityType>
+        <EntityType Name="Korisnik">
+          <Key>
+            <PropertyRef Name="korisnikID" />
+          </Key>
+          <Property Name="korisnikID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Ime" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Prezime" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Kor_ime" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Datum_rodenja" Type="DateTime" Nullable="false" />
+          <Property Name="OIB" Type="String" MaxLength="11" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Lozinka" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="ulogaID" Type="Int32" Nullable="false" />
+          <Property Name="Zaposlen" Type="Boolean" Nullable="false" />
+          <Property Name="Email" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="cijenaID" Type="Int32" />
+          <NavigationProperty Name="Cijena_rada" Relationship="Self.public_cijenaKorisnikForeignKey" FromRole="Korisnik" ToRole="Cijena_rada" />
+          <NavigationProperty Name="Pocetak_ZavrĹˇetak_rada" Relationship="Self.public_KorisnikPoZarada" FromRole="Korisnik" ToRole="Pocetak_ZavrĹˇetak_rada" />
+          <NavigationProperty Name="Placa" Relationship="Self.public_PlacaKorisnikForeignKey" FromRole="Korisnik" ToRole="Placa" />
+          <NavigationProperty Name="Radno_vrijeme" Relationship="Self.public_RadnoVrijemeKorisnikForeignKey" FromRole="Korisnik" ToRole="Radno_vrijeme" />
+          <NavigationProperty Name="Uloga" Relationship="Self.public_ulogaForeignKeyConstraint" FromRole="Korisnik" ToRole="Uloga" />
+        </EntityType>
+        <EntityType Name="Logs">
+          <Key>
+            <PropertyRef Name="logID" />
+          </Key>
+          <Property Name="logID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="old_email" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Placa">
+          <Key>
+            <PropertyRef Name="placaID" />
+          </Key>
+          <Property Name="placaID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="korisnikID" Type="Int32" Nullable="false" />
+          <Property Name="Ukupan_Iznos" Type="Double" Nullable="false" />
+          <Property Name="Pocetak_mjeseca" Type="DateTime" Nullable="false" />
+          <Property Name="Kraj_mjeseca" Type="DateTime" Nullable="false" />
+          <NavigationProperty Name="Korisnik" Relationship="Self.public_PlacaKorisnikForeignKey" FromRole="Placa" ToRole="Korisnik" />
+        </EntityType>
+        <EntityType Name="Pocetak_ZavrĹˇetak_rada">
+          <Key>
+            <PropertyRef Name="pozaRadaID" />
+          </Key>
+          <Property Name="pozaRadaID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Datum_pocetka" Type="DateTime" Nullable="false" />
+          <Property Name="Datum_zavrĹˇetka" Type="DateTime" />
+          <Property Name="korisnikID" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Korisnik" Relationship="Self.public_KorisnikPoZarada" FromRole="Pocetak_ZavrĹˇetak_rada" ToRole="Korisnik" />
+        </EntityType>
+        <EntityType Name="Radno_vrijeme">
+          <Key>
+            <PropertyRef Name="radnoVrijemeID" />
+          </Key>
+          <Property Name="radnoVrijemeID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="korisnikID" Type="Int32" Nullable="false" />
+          <Property Name="Pocetak_rada" Type="Time" Nullable="false" />
+          <Property Name="Trajanje_rada" Type="Time" />
+          <Property Name="ZavrĹˇetak_rada" Type="Time" Nullable="false" />
+          <Property Name="Datum_rada" Type="DateTime" />
+          <NavigationProperty Name="Korisnik" Relationship="Self.public_RadnoVrijemeKorisnikForeignKey" FromRole="Radno_vrijeme" ToRole="Korisnik" />
+        </EntityType>
+        <EntityType Name="Uloga">
+          <Key>
+            <PropertyRef Name="ulogaID" />
+          </Key>
+          <Property Name="ulogaID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Ime" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="Korisnik" Relationship="Self.public_ulogaForeignKeyConstraint" FromRole="Uloga" ToRole="Korisnik" />
+        </EntityType>
+        <Association Name="public_cijenaKorisnikForeignKey">
+          <End Role="Cijena_rada" Type="Self.Cijena_rada" Multiplicity="0..1" />
+          <End Role="Korisnik" Type="Self.Korisnik" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Cijena_rada">
+              <PropertyRef Name="cijenaID" />
+            </Principal>
+            <Dependent Role="Korisnik">
+              <PropertyRef Name="cijenaID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="public_KorisnikPoZarada">
+          <End Role="Korisnik" Type="Self.Korisnik" Multiplicity="1" />
+          <End Role="Pocetak_ZavrĹˇetak_rada" Type="Self.Pocetak_ZavrĹˇetak_rada" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Korisnik">
+              <PropertyRef Name="korisnikID" />
+            </Principal>
+            <Dependent Role="Pocetak_ZavrĹˇetak_rada">
+              <PropertyRef Name="korisnikID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="public_PlacaKorisnikForeignKey">
+          <End Role="Korisnik" Type="Self.Korisnik" Multiplicity="1" />
+          <End Role="Placa" Type="Self.Placa" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Korisnik">
+              <PropertyRef Name="korisnikID" />
+            </Principal>
+            <Dependent Role="Placa">
+              <PropertyRef Name="korisnikID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="public_RadnoVrijemeKorisnikForeignKey">
+          <End Role="Korisnik" Type="Self.Korisnik" Multiplicity="1" />
+          <End Role="Radno_vrijeme" Type="Self.Radno_vrijeme" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Korisnik">
+              <PropertyRef Name="korisnikID" />
+            </Principal>
+            <Dependent Role="Radno_vrijeme">
+              <PropertyRef Name="korisnikID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="public_ulogaForeignKeyConstraint">
+          <End Role="Uloga" Type="Self.Uloga" Multiplicity="1" />
+          <End Role="Korisnik" Type="Self.Korisnik" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Uloga">
+              <PropertyRef Name="ulogaID" />
+            </Principal>
+            <Dependent Role="Korisnik">
+              <PropertyRef Name="ulogaID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="postgresEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Cijena_rada" EntityType="Self.Cijena_rada" />
+          <EntitySet Name="Korisnik" EntityType="Self.Korisnik" />
+          <EntitySet Name="Logs" EntityType="Self.Logs" />
+          <EntitySet Name="Placa" EntityType="Self.Placa" />
+          <EntitySet Name="Pocetak_ZavrĹˇetak_rada" EntityType="Self.Pocetak_ZavrĹˇetak_rada" />
+          <EntitySet Name="Radno_vrijeme" EntityType="Self.Radno_vrijeme" />
+          <EntitySet Name="Uloga" EntityType="Self.Uloga" />
+          <AssociationSet Name="public_cijenaKorisnikForeignKey" Association="Self.public_cijenaKorisnikForeignKey">
+            <End Role="Cijena_rada" EntitySet="Cijena_rada" />
+            <End Role="Korisnik" EntitySet="Korisnik" />
+          </AssociationSet>
+          <AssociationSet Name="public_KorisnikPoZarada" Association="Self.public_KorisnikPoZarada">
+            <End Role="Korisnik" EntitySet="Korisnik" />
+            <End Role="Pocetak_ZavrĹˇetak_rada" EntitySet="Pocetak_ZavrĹˇetak_rada" />
+          </AssociationSet>
+          <AssociationSet Name="public_PlacaKorisnikForeignKey" Association="Self.public_PlacaKorisnikForeignKey">
+            <End Role="Korisnik" EntitySet="Korisnik" />
+            <End Role="Placa" EntitySet="Placa" />
+          </AssociationSet>
+          <AssociationSet Name="public_RadnoVrijemeKorisnikForeignKey" Association="Self.public_RadnoVrijemeKorisnikForeignKey">
+            <End Role="Korisnik" EntitySet="Korisnik" />
+            <End Role="Radno_vrijeme" EntitySet="Radno_vrijeme" />
+          </AssociationSet>
+          <AssociationSet Name="public_ulogaForeignKeyConstraint" Association="Self.public_ulogaForeignKeyConstraint">
+            <End Role="Uloga" EntitySet="Uloga" />
+            <End Role="Korisnik" EntitySet="Korisnik" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="postgresModelStoreContainer" CdmEntityContainer="postgresEntities">
+          <EntitySetMapping Name="Cijena_rada">
+            <EntityTypeMapping TypeName="postgresModel.Cijena_rada">
+              <MappingFragment StoreEntitySet="Cijena_rada">
+                <ScalarProperty Name="cijenaID" ColumnName="cijenaID" />
+                <ScalarProperty Name="Redovna" ColumnName="Redovna" />
+                <ScalarProperty Name="Prekovremena" ColumnName="Prekovremena" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Korisnik">
+            <EntityTypeMapping TypeName="postgresModel.Korisnik">
+              <MappingFragment StoreEntitySet="Korisnik">
+                <ScalarProperty Name="korisnikID" ColumnName="korisnikID" />
+                <ScalarProperty Name="Ime" ColumnName="Ime" />
+                <ScalarProperty Name="Prezime" ColumnName="Prezime" />
+                <ScalarProperty Name="Kor_ime" ColumnName="Kor_ime" />
+                <ScalarProperty Name="Datum_rodenja" ColumnName="Datum_rodenja" />
+                <ScalarProperty Name="OIB" ColumnName="OIB" />
+                <ScalarProperty Name="Lozinka" ColumnName="Lozinka" />
+                <ScalarProperty Name="ulogaID" ColumnName="ulogaID" />
+                <ScalarProperty Name="Zaposlen" ColumnName="Zaposlen" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="cijenaID" ColumnName="cijenaID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Logs">
+            <EntityTypeMapping TypeName="postgresModel.Logs">
+              <MappingFragment StoreEntitySet="Logs">
+                <ScalarProperty Name="logID" ColumnName="logID" />
+                <ScalarProperty Name="old_email" ColumnName="old_email" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Placa">
+            <EntityTypeMapping TypeName="postgresModel.Placa">
+              <MappingFragment StoreEntitySet="Placa">
+                <ScalarProperty Name="placaID" ColumnName="placaID" />
+                <ScalarProperty Name="korisnikID" ColumnName="korisnikID" />
+                <ScalarProperty Name="Ukupan_Iznos" ColumnName="Ukupan_Iznos" />
+                <ScalarProperty Name="Pocetak_mjeseca" ColumnName="Pocetak_mjeseca" />
+                <ScalarProperty Name="Kraj_mjeseca" ColumnName="Kraj_mjeseca" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Pocetak_ZavrĹˇetak_rada">
+            <EntityTypeMapping TypeName="postgresModel.Pocetak_ZavrĹˇetak_rada">
+              <MappingFragment StoreEntitySet="Pocetak_ZavrĹˇetak_rada">
+                <ScalarProperty Name="pozaRadaID" ColumnName="pozaRadaID" />
+                <ScalarProperty Name="Datum_pocetka" ColumnName="Datum_pocetka" />
+                <ScalarProperty Name="Datum_zavrĹˇetka" ColumnName="Datum_zavrĹˇetka" />
+                <ScalarProperty Name="korisnikID" ColumnName="korisnikID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Radno_vrijeme">
+            <EntityTypeMapping TypeName="postgresModel.Radno_vrijeme">
+              <MappingFragment StoreEntitySet="Radno_vrijeme">
+                <ScalarProperty Name="radnoVrijemeID" ColumnName="radnoVrijemeID" />
+                <ScalarProperty Name="korisnikID" ColumnName="korisnikID" />
+                <ScalarProperty Name="Pocetak_rada" ColumnName="Pocetak_rada" />
+                <ScalarProperty Name="Trajanje_rada" ColumnName="Trajanje_rada" />
+                <ScalarProperty Name="ZavrĹˇetak_rada" ColumnName="ZavrĹˇetak_rada" />
+                <ScalarProperty Name="Datum_rada" ColumnName="Datum_rada" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Uloga">
+            <EntityTypeMapping TypeName="postgresModel.Uloga">
+              <MappingFragment StoreEntitySet="Uloga">
+                <ScalarProperty Name="ulogaID" ColumnName="ulogaID" />
+                <ScalarProperty Name="Ime" ColumnName="Ime" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="true" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
